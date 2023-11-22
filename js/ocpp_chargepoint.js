@@ -536,7 +536,7 @@ export default class ChargePoint {
     // Return the meter value
     //
     meterValue() {
-        return (getSessionKey(ocpp.KEY_METER_VALUE,"0"));
+        return parseInt(getSessionKey(ocpp.KEY_METER_VALUE, "0"));
     }
     
     //
