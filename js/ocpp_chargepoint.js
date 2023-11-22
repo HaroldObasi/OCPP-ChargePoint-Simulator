@@ -304,7 +304,7 @@ export default class ChargePoint {
     // @param tagId the id of the RFID tag currently authorized on the CP
     //
     stopTransaction(tagId){
-        var transactionId=getSessionKey("TransactionId");
+        var transactionId = parseInt(getSessionKey("TransactionId"));
         this.stopTransactionWithId(transactionId,tagId);
     }
     
@@ -622,10 +622,9 @@ export default class ChargePoint {
     // @return connector availability
     //
     availability(c=0) {
-        var key = ocpp.KEY_CONN_AVAILABILITY + c;
-        return getKey(key,ocpp.AVAILABITY_OPERATIVE);
+      var key = ocpp.KEY_CONN_AVAILABILITY + c;
+      return getKey(key, ocpp.AVAILABITY_OPERATIVE);
     }
-
     //
     // Update the availability of given connector
     // (availability is set by remote server thus no "updateServer" flag as for connector status)
