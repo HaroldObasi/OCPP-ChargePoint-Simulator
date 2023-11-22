@@ -490,23 +490,22 @@ export default class ChargePoint {
 
                 // Decrypt Message Type
                 var msgType=ddata[0];
-                switch(msgType) {
-                    case 2: // CALL 
-                        var id=ddata[1];
-                        var request=ddata[2];
-                        var payload=null;
-                        if (ddata.length > 3) {
-                            payload = ddata[3];
-                        }
-                        self.handleCallRequest(id,request,payload);
-                        break;
-                    case 3: // CALLRESULT 
-                        console.log("call result: ", ddata);
-                        self.handleCallResult(ddata[2]);
-                        break;
-                    case 4: // CALLERROR
-                        self.handleCallError(ddata[2],ddata[3]);
-                        break;
+                switch (msgType) {
+                  case 2: // CALL
+                    var id = ddata[1];
+                    var request = ddata[2];
+                    var payload = null;
+                    if (ddata.length > 3) {
+                      payload = ddata[3];
+                    }
+                    self.handleCallRequest(id, request, payload);
+                    break;
+                  case 3: // CALLRESULT
+                    self.handleCallResult(ddata[2]);
+                    break;
+                  case 4: // CALLERROR
+                    self.handleCallError(ddata[2], ddata[3]);
+                    break;
                 }
             }
 
@@ -515,6 +514,7 @@ export default class ChargePoint {
             //   
             this._websocket.onclose = function(evt) {
                 if (evt.code == 3001) {
+                    clearInterval(self._heartbeat);
                     self.setStatus(ocpp.CP_DISCONNECTED);
                     self.logMsg('Connection closed');
                     self._websocket = null;
