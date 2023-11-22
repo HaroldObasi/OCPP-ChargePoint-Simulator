@@ -400,18 +400,22 @@ export default class ChargePoint {
         if (this._heartbeat) {
             clearInterval(this._heartbeat);
         }
-        this._heartbeat = setInterval(this.sendHeartbeat,period*1000);
+        this._heartbeat = setInterval(
+          () => this.sendHeartbeat(),
+          period * 1000
+        );
     }
 
     //
     // Send a heartbeat to the OCPP Server
     //
     sendHeartbeat() {
-        this.setLastAction("Heartbeat");
-        var id=generateId();
-        var HB = JSON.stringify([2,id,"Heartbeat", {}]);
-        this.logMsg('Heartbeat');
-        this.wsSendData(HB);
+      this.setLastAction("Heartbeat");
+      setSessionKey("LastAction", "Heartbeat");
+      var id = generateId();
+      var HB = JSON.stringify([2, id, "Heartbeat", {}]);
+      this.logMsg("Heartbeat");
+      this.wsSendData(HB);
     }
     
     //
@@ -497,6 +501,7 @@ export default class ChargePoint {
                         self.handleCallRequest(id,request,payload);
                         break;
                     case 3: // CALLRESULT 
+                        console.log("call result: ", ddata);
                         self.handleCallResult(ddata[2]);
                         break;
                     case 4: // CALLERROR
