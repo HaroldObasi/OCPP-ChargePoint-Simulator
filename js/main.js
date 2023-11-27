@@ -156,8 +156,8 @@ $( document ).ready(function() {
     });
 
     $('#connect').click(function () {
-        $('.indicator').hide();
-        _cp.wsConnect(getKey(WSURL),getKey(CPID));
+      $(".indicator").hide();
+      _cp.wsConnect(getKey(WSURL), getKey(CPID));
     });
 
     $('#disconnect').click(function () {
