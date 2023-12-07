@@ -162,61 +162,84 @@ export default class ChargePoint {
         var respOk = JSON.stringify([3,id,{"status": "Accepted"}]);
         var connectorId=0;
         switch (request) {
-            case "Reset":
-                //Reset type can be SOFT, HARD
-                var rstType=payload.type;
-                this.logMsg("Reset Request: type="+rstType);
-                this.wsSendData(respOk);
-                this.wsDisconnect();
-                break;
+          case "Reset":
+            //Reset type can be SOFT, HARD
+            var rstType = payload.type;
+            this.logMsg("Reset Request: type=" + rstType);
+            this.wsSendData(respOk);
+            this.wsDisconnect();
+            break;
 
-            case "RemoteStartTransaction":
-                console.log("RemoteStartTransaction");
-                //Need to get idTag, connectorId (map - ddata[3])
-                var tagId = payload.idTag;
-                this.logMsg("Reception of a RemoteStartTransaction request for tag "+tagId);
-                this.wsSendData(respOk);
-                this.startTransaction(tagId);
-                break;
+          case "RemoteStartTransaction":
+            console.log("RemoteStartTransaction");
+            //Need to get idTag, connectorId (map - ddata[3])
+            var tagId = payload.idTag;
+            this.logMsg(
+              "Reception of a RemoteStartTransaction request for tag " + tagId
+            );
+            this.wsSendData(respOk);
+            this.startTransaction(tagId);
+            break;
 
-            case "RemoteStopTransaction":
-                var stop_id = payload.transactionId;
-                this.logMsg("Reception of a RemoteStopTransaction request for transaction "+stop_id);
-                this.wsSendData(respOk);
-                this.stopTransactionWithId(stop_id);
-                break;
+          case "RemoteStopTransaction":
+            var stop_id = payload.transactionId;
+            this.logMsg(
+              "Reception of a RemoteStopTransaction request for transaction " +
+                stop_id
+            );
+            this.wsSendData(respOk);
+            this.stopTransactionWithId(stop_id);
+            break;
 
-            case "TriggerMessage":
-                var requestedMessage = payload.requestedMessage;
-                // connectorId is optionnal thus must check if it is provided
-                if(payload["connectorId"]) { 
-                    connectorId = payload["connectorId"];
-                }
-                this.logMsg("Reception of a TriggerMessage request ("+requestedMessage+")");
-                this.wsSendData(respOk);
-                this.triggerMessage(requestedMessage,connectorId);
-                break;
-                
-            case "ChangeAvailability":
-                var avail=payload.type;
-                connectorId=payload.connectorId;
-                this.logMsg("Reception of a ChangeAvailability request (connector "+connectorId+" "+avail+")");
-                this.wsSendData(respOk);
-                this.setConnectorAvailability(Number(connectorId),avail)
-                break;
-                
-            case "UnlockConnector":
-                this.wsSendData(respOk);
-                // connector_locked = false;
-                // $('.indicator').hide();
-                //$('#yellow').show();
-                //logMsg("Connector status changed to: "+connector_locked);
-                break;
+          case "TriggerMessage":
+            var requestedMessage = payload.requestedMessage;
+            // connectorId is optionnal thus must check if it is provided
+            if (payload["connectorId"]) {
+              connectorId = payload["connectorId"];
+            }
+            this.logMsg(
+              "Reception of a TriggerMessage request (" + requestedMessage + ")"
+            );
+            this.wsSendData(respOk);
+            this.triggerMessage(requestedMessage, connectorId);
+            break;
 
-            default:
-                var error = JSON.stringify([4,id,"NotImplemented"]);
-                this.wsSendData(error);
-                break;
+          case "ChangeAvailability":
+            var avail = payload.type;
+            connectorId = payload.connectorId;
+            this.logMsg(
+              "Reception of a ChangeAvailability request (connector " +
+                connectorId +
+                " " +
+                avail +
+                ")"
+            );
+            this.wsSendData(respOk);
+            this.setConnectorAvailability(Number(connectorId), avail);
+            break;
+
+          case "GetConfiguration":
+            var response = JSON.stringify([
+              3,
+              id,
+              { configurationKey: "testingrandomkey" },
+            ]);
+            var key = payload.key;
+            this.logMsg(`Reception of a GetConfiguration for key ${key}`);
+            this.wsSendData(response);
+
+          case "UnlockConnector":
+            this.wsSendData(respOk);
+            // connector_locked = false;
+            // $('.indicator').hide();
+            //$('#yellow').show();
+            //logMsg("Connector status changed to: "+connector_locked);
+            break;
+
+          default:
+            var error = JSON.stringify([4, id, "NotImplemented"]);
+            this.wsSendData(error);
+            break;
         }
     }
 
